@@ -1,15 +1,15 @@
 version: '2'
 services:
   uwazi:
-    image: uwazi
-    #build: .
+    #image: uwazi
+    build: .
     ports:
      - "3000:3000"
     depends_on:
      - couchdb
      - elasticsearch
     environment:
-     - COUCHDB_URL=http://couchdb:5984/uwazi_development
+     - COUCHDB_URL=http://couchdb:5984
      - ELASTICSEARCH_URL=http://elasticsearch:9200
   couchdb:
     image: klaemo/couchdb
