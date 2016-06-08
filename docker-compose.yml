@@ -1,0 +1,29 @@
+version: '2'
+services:
+  uwazi:
+    image: uwazi
+    #build: .
+    ports:
+     - "3000:3000"
+    depends_on:
+     - couchdb
+     - elasticsearch
+    environment:
+     - COUCHDB_URL=http://couchdb:5984/uwazi_development
+     - ELASTICSEARCH_URL=http://elasticsearch:9200
+  couchdb:
+    image: klaemo/couchdb
+    ports:
+     - "5984:5984"
+  elasticsearch:
+    image: elasticsearch
+    ports:
+    - "9200:9200"
+  logstash:
+    image: logstash
+    volumes:
+      - ./logstash/docker:/config-dir
+    depends_on:
+     - couchdb
+     - elasticsearch
+    command: "logstash -f /config-dir/logstash.conf"
