@@ -8,4 +8,4 @@ echo -e "\nremoving views of ${1:-uwazi_development} database"
 ../node_modules/couchdb-dump/bin/cdbload -h couchdb -d ${1:-uwazi_development}
 
 echo -e "\nimporting views into ${1:-uwazi_development} database"
-../node_modules/couchdb-dump/bin/cdbload -h couchdb -d ${1:-uwazi_development} < ./views.js
+../node_modules/couchdb-dump/bin/cdbload -h couchdb -d ${1:-uwazi_development} -v < ./views.js
