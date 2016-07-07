@@ -10,8 +10,12 @@ if [ "$1" = "test_api" ]; then
     exec node api_test.js
 fi
 
+if [ "$1" = "database" ]; then
+    cd uwazi-fixtures && ./restore.sh && cd ..
+    exec ./couchdb/restore_views.sh
+fi
+
 if [ "$1" = "uwazi" ]; then
-    ./node_modules/webpack/bin/webpack.js
     exec node server "$@"
 fi
 
