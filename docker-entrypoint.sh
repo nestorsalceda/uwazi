@@ -12,7 +12,8 @@ fi
 
 if [ "$1" = "database" ]; then
     cd uwazi-fixtures && ./restore.sh && cd ..
-    exec ./couchdb/restore_views.sh
+    cd couchdb && ./restore_views.sh && cd ..
+    exec true
 fi
 
 if [ "$1" = "uwazi" ]; then
