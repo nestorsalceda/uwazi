@@ -12,11 +12,11 @@ fi
 
 if [ "$1" = "database" ]; then
     cd uwazi-fixtures && ./restore.sh && cd ..
-    cd couchdb && ./restore_views.sh && cd ..
     exec true
 fi
 
 if [ "$1" = "uwazi" ]; then
+    cd couchdb && ./restore_views.sh && cd ..
     exec node server "$@"
 fi
 
