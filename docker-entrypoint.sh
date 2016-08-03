@@ -11,7 +11,7 @@ if [ "$1" = "test_api" ]; then
 fi
 
 if [ "$1" = "database" ]; then
-    cd uwazi-fixtures && ./restore.sh && cd ..
+    cd couchdb && ./blank_state.sh && cd ..
     exec true
 fi
 
