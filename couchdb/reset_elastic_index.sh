@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo "Removing ${1:-uwazi_development} index"
-curl -X DELETE http://localhost:9200/${1:-uwazi_development}/
+curl -X DELETE http://elasticsearch:9200/${1:-uwazi_development}/
 echo -e "\n\nCreating ${1:-uwazi_development} index"
-curl -X PUT http://localhost:9200/${1:-uwazi_development}/ -d '
+curl -X PUT http://elasticasearch:9200/${1:-uwazi_development}/ -d '
 {
   "mappings" : {
     "_default_" : {
