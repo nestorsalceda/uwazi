@@ -11,12 +11,12 @@ if [ "$1" = "test_api" ]; then
 fi
 
 if [ "$1" = "database" ]; then
-    cd couchdb && ./blank_state.sh && cd ..
+    cd couchdb && ./blank_state.sh $DATABASE_NAME && cd ..
     exec true
 fi
 
 if [ "$1" = "uwazi" ]; then
-    cd couchdb && ./restore_views.sh && cd ..
+    cd couchdb && ./restore_views.sh $DATABASE_NAME && cd ..
     exec node server "$@"
 fi
 
