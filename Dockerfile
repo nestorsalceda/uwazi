@@ -16,10 +16,6 @@ COPY package.json /opt/uwazi/
 RUN npm install
 COPY . /opt/uwazi
 
-WORKDIR /opt/uwazi/uwazi-fixtures
-RUN npm install
-
-WORKDIR /opt/uwazi
 RUN /opt/uwazi/node_modules/webpack/bin/webpack.js
 
 VOLUME "/opt/uwazi/uploaded_documents"
