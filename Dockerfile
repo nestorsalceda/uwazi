@@ -20,6 +20,7 @@ COPY . /opt/uwazi
 RUN /opt/uwazi/node_modules/webpack/bin/webpack.js
 
 VOLUME "/opt/uwazi/uploaded_documents"
+VOLUME "/opt/uwazi/log"
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["uwazi"]
 
