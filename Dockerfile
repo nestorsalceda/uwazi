@@ -5,6 +5,7 @@ RUN apt-get update \
         ruby-full \
         pdf2htmlex \
         ghostscript \
+        poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem install --no-ri --no-rdoc docsplit
