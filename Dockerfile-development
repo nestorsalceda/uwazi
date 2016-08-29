@@ -1,0 +1,18 @@
+FROM node:4
+
+RUN apt-get update \
+    && apt-get install --install-recommends --no-install-suggests -y \
+        ruby-full \
+        pdf2htmlex \
+        ghostscript \
+        poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN gem install --no-ri --no-rdoc docsplit
+
+VOLUME "/opt/uwazi"
+WORKDIR /opt/uwazi
+
+RUN npm install -g nodemon webpack
+
+EXPOSE 3000
