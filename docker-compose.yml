@@ -9,9 +9,12 @@ services:
     depends_on:
      - couchdb
      - elasticsearch
+     - logstash
     environment:
      - COUCHDB_URL=http://couchdb:5984
      - ELASTICSEARCH_URL=http://elasticsearch:9200
+     - DATABASE_NAME=uwazi_development
+     - INDEX_NAME=uwazi_development
      - API_URL=http://localhost:3000
     volumes:
       - .:/opt/uwazi
