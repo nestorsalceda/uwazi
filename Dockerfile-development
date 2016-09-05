@@ -15,4 +15,7 @@ WORKDIR /opt/uwazi
 
 RUN npm install -g nodemon webpack
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["runlocal"]
+
 EXPOSE 3000
