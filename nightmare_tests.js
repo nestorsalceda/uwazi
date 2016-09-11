@@ -16,7 +16,7 @@ var jasmine = new Jasmine();
 var reporters = require('jasmine-reporters');
 
 var dbConfig = require('./app/api/config/database.js');
-dbConfig.db_url = dbConfig.development;
+dbConfig.db_url = dbConfig.e2e;
 
 jasmine.loadConfig({
   spec_dir: '/',
