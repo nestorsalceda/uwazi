@@ -13,11 +13,10 @@ fdescribe('filters path', () => {
     it('should log in as admin then click the settings nav button', (done) => {
       nightmare
       .login('admin', 'admin')
-      .waitToClick(selectors.navigation.settingsNavButton)
-      .wait(selectors.settingsView.settingsHeader)
+      .wait(selectors.navigation.settingsNavButton)
       .url()
       .then((url) => {
-        expect(url).toBe(config.url + '/settings/account');
+        expect(url).toBe(config.url + '/');
         done();
       })
       .catch(catchErrors(done));
