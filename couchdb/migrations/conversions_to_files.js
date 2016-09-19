@@ -5,6 +5,11 @@ import documents from 'api/documents/documents';
 let extractConversion = (conversion) => {
   return request.get(`${dbURL}/_design/documents/_view/conversions?key="${conversion}"`)
   .then(({json}) => {
+    if (json.rows.length === 0) {
+      return Promise.all([
+        {}
+      ]);
+    }
     let html = json.rows[0].value;
     console.log(Object.keys(html));
     return Promise.all([
@@ -13,6 +18,9 @@ let extractConversion = (conversion) => {
     ])
   })
   .then(([html]) => {
+    if(!html._rev) {
+      return Promise.resolve('no conversion found');
+    }
     return request.delete(`${dbURL}/${html._id}`, {rev: html._rev});
   })
   .then((response) => {
