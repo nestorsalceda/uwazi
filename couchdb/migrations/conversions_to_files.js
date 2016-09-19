@@ -6,8 +6,10 @@ let extractConversion = (conversion) => {
   return request.get(`${dbURL}/_design/documents/_view/conversions?key="${conversion}"`)
   .then(({json}) => {
     if (json.rows.length === 0) {
+      let defaultHTML = {pages: [''], fonts: '', css: ''};
       return Promise.all([
-        {}
+        defaultHTML,
+        documents.saveHTML(defaultHTML)
       ]);
     }
     let html = json.rows[0].value;
