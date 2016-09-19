@@ -16,6 +16,7 @@ if [ "$1" = "database" ]; then
 fi
 
 if [ "$1" = "uwazi" ]; then
+    cd couchdb && cd migrations && node run_migration.js && cd .. && cd ..
     cd couchdb && ./restore_views.sh $DATABASE_NAME && cd ..
     exec node server "$@"
 fi
