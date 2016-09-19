@@ -14,5 +14,9 @@ echo -e "\nreseting views on ${1:-uwazi_development} database"
 ./restore_views.sh ${1:-uwazi_development}
 
 echo "Restoring conversions...."
-rm ../conversions/*.json
-cp ./conversions/*.json ${2:-..}/conversions/
+if [ -f ../conversions/*.json ]; then
+  echo "Removing old conversions"
+  rm ../conversions/*.json
+fi
+echo "Copying conversions"
+cp ./conversions/*.json ../conversions/
