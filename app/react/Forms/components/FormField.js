@@ -3,7 +3,9 @@ import {createFieldClass, controls} from 'react-redux-form';
 
 const FieldController = createFieldClass({
   Select: controls.select,
-  DatePicker: controls.text
+  MultiSelect: controls.select,
+  DatePicker: controls.text,
+  MarkDown: controls.text
 });
 
 class FormField extends Component {

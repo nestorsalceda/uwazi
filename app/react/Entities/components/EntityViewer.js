@@ -4,7 +4,7 @@ import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import {formater} from 'app/Metadata';
+import {formater, ShowMetadata} from 'app/Metadata';
 import ShowIf from 'app/App/ShowIf';
 import {NeedAuthorization} from 'app/Auth';
 import {browserHistory} from 'react-router';
@@ -25,19 +25,6 @@ export class EntityViewer extends Component {
       title: 'Confirm delete',
       message: 'Are you sure you want to delete this entity?'
     });
-  }
-
-  renderMetadata(entity) {
-    return <div className="view">
-      {entity.metadata.map((property, index) => {
-        return (
-          <dl key={index}>
-            <dt>{property.label}</dt>
-            <dd>{property.value}</dd>
-          </dl>
-          );
-      })}
-    </div>;
   }
 
   deleteReference(reference) {
@@ -102,12 +89,13 @@ export class EntityViewer extends Component {
                 <span className="item-type__name">{entity.documentType}</span>
               </span>
             </ShowIf>
-          {(() => {
-            if (entityBeingEdited) {
-              return <EntityForm/>;
-            }
-            return this.renderMetadata(entity);
-          })()}
+
+            {(() => {
+              if (entityBeingEdited) {
+                return <EntityForm/>;
+              }
+              return <ShowMetadata entity={entity} showTitle={false} showType={false} />;
+            })()}
 
           </div>
         </aside>
@@ -156,12 +144,14 @@ export class EntityViewer extends Component {
                       <div className="item-actions">
                         <NeedAuthorization>
                           <a className="item-shortcut" onClick={this.deleteReference.bind(this, reference)}>
-                            <i className="fa fa-unlink"></i><span>Delete</span>
+                            <i className="fa fa-unlink"></i>&nbsp;<span>Delete</span>
                           </a>
                         </NeedAuthorization>
                         &nbsp;
                         <Link to={'/document/' + reference.connectedDocument} onClick={e => e.stopPropagation()} className="item-shortcut">
-                          <i className="fa fa-file-o"></i><span>View</span><i className="fa fa-angle-right"></i>
+                          <span className="itemShortcut-arrow">
+                            <i className="fa fa-external-link"></i>
+                          </span>
                         </Link>
                       </div>
                     </div>

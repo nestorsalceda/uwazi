@@ -9,6 +9,8 @@ import * as actions from 'app/Library/actions/libraryActions';
 import * as types from 'app/Library/actions/actionTypes';
 import * as notificationsTypes from 'app/Notifications/actions/actionTypes';
 import documents from 'app/Documents';
+import {browserHistory} from 'react-router';
+import {toUrlParams} from 'shared/JSONRequest';
 
 import libraryHelper from 'app/Library/helpers/libraryFilters';
 
@@ -17,6 +19,7 @@ const mockStore = configureMockStore(middlewares);
 
 describe('libraryActions', () => {
   let documentCollection = [{name: 'Secret list of things'}];
+  let aggregations = [{prop: {buckets: []}}];
   let templates = [{name: 'Decision'}, {name: 'Ruling'}];
   let thesauris = [{_id: 'abc1'}];
 
@@ -28,7 +31,7 @@ describe('libraryActions', () => {
   });
 
   describe('setTemplates', () => {
-    let documentTypes = {typea: true, typeb: false};
+    let documentTypes = ['typea'];
     let libraryFilters = 'generated filters';
     let dispatch;
     let getState;
@@ -38,7 +41,6 @@ describe('libraryActions', () => {
     };
 
     beforeEach(() => {
-      spyOn(libraryHelper, 'generateDocumentTypes').and.returnValue(documentTypes);
       spyOn(libraryHelper, 'libraryFilters').and.returnValue(libraryFilters);
       dispatch = jasmine.createSpy('dispatch');
       getState = jasmine.createSpy('getState').and.returnValue({library: {filters: Immutable.fromJS(filters)}});
@@ -46,11 +48,10 @@ describe('libraryActions', () => {
 
     it('should dispatch a SET_LIBRARY_TEMPLATES action ', () => {
       actions.setTemplates(templates, thesauris)(dispatch, getState);
-      expect(libraryHelper.generateDocumentTypes).toHaveBeenCalledWith(templates);
       expect(dispatch).toHaveBeenCalledWith({
         type: types.SET_LIBRARY_TEMPLATES,
-        templates, thesauris, documentTypes,
-        libraryFilters: ['library properties']
+        templates,
+        thesauris
       });
     });
   });
@@ -98,13 +99,15 @@ describe('libraryActions', () => {
       .mock(APIURL + 'search/match_title?searchTerm=batman', 'get', {body: JSON.stringify(documentCollection)})
       .mock(APIURL + 'search?searchTerm=batman', 'get', {body: JSON.stringify(documentCollection)})
       .mock(APIURL +
-        'search?searchTerm=batman&' +
-        'filters=%7B%22author%22%3A%7B%22value%22%3A%22batman%22%2C%22type%22%3A%22text%22%7D%7D&types=%5B%22decision%22%5D',
+        'search?searchTerm=batman' +
+        '&filters=%7B%22author%22%3A%7B%22value%22%3A%22batman%22%2C%22type%22%3A%22text%22%7D%7D' +
+        '&aggregations=%5B%5D' +
+        '&types=%5B%22decision%22%5D',
         'get',
-        {body: JSON.stringify(documentCollection)}
+        {body: JSON.stringify({rows: documentCollection, aggregations})}
       )
-      .mock(APIURL + 'search?searchTerm=batman&filters=%7B%7D&types=%5B%22decision%22%5D', 'get',
-            {body: JSON.stringify(documentCollection)});
+      .mock(APIURL + 'search?searchTerm=batman&filters=%7B%7D&aggregations=%5B%5D&types=%5B%22decision%22%5D', 'get',
+            {body: JSON.stringify({rows: documentCollection, aggregations})});
       dispatch = jasmine.createSpy('dispatch');
     });
 
@@ -113,43 +116,39 @@ describe('libraryActions', () => {
       let getState;
       let state;
       beforeEach(() => {
-        state = {properties: [{name: 'author', active: true}], documentTypes: {decision: true, ruling: false}};
+        state = {properties: [
+          {name: 'author', active: true},
+          {name: 'inactive'},
+          {name: 'date', type: 'date', active: true},
+          {name: 'select', type: 'select', active: true},
+          {name: 'multiselect', type: 'multiselect', active: true}
+        ], documentTypes: ['decision']};
         store = {library: {filters: Immutable.fromJS(state)}};
         getState = jasmine.createSpy('getState').and.returnValue(store);
       });
 
-      it('should perform a search and return a SET_DOCUMENTS action with the result ', (done) => {
-        actions.searchDocuments({searchTerm: 'batman', filters: {author: 'batman'}})(dispatch, getState)
-        .then(() => {
-          expect(backend.called(APIURL +
-            'search?searchTerm=batman' +
-            '&filters=%7B%22author%22%3A%7B%22value%22%3A%22batman%22%2C%22type%22%3A%22text%22%7D%7D&types=%5B%22decision%22%5D'))
-          .toBe(true);
-          expect(dispatch).toHaveBeenCalledWith({type: types.SET_DOCUMENTS, documents: documentCollection});
-          done();
-        })
-        .catch(done.fail);
+      it('should convert the search and set it to the url query', () => {
+        const query = {searchTerm: 'batman', filters: {author: 'batman', date: 'dateValue', select: 'selectValue', multiselect: 'multiValue'}};
+        const limit = 'limit';
+        spyOn(browserHistory, 'push');
+        actions.searchDocuments(query, limit)(dispatch, getState);
+        const expected = Object.assign({}, query);
+        expected.aggregations = ['select', 'multiselect'];
+        expected.filters = {
+          author: {value: 'batman', type: 'text'},
+          date: {value: 'dateValue', type: 'range'},
+          select: {value: 'selectValue', type: 'multiselect'},
+          multiselect: {value: 'multiValue', type: 'multiselect'}
+        };
+        expected.types = ['decision'];
+        expected.limit = limit;
+
+        expect(browserHistory.push).toHaveBeenCalledWith(`/${toUrlParams(expected)}`);
       });
 
-      it('should remove from the search the filters that are not active', (done) => {
-        state.properties[0].active = false;
-        store.library.filters = Immutable.fromJS(state);
-        actions.searchDocuments({searchTerm: 'batman', filters: {author: 'batman'}})(dispatch, getState)
-        .then(() => {
-          expect(backend.called(APIURL + 'search?searchTerm=batman&filters=%7B%7D&types=%5B%22decision%22%5D')).toBe(true);
-          expect(dispatch).toHaveBeenCalledWith({type: types.SET_DOCUMENTS, documents: documentCollection});
-          done();
-        })
-        .catch(done.fail);
-      });
-
-      it('should dispatch a HIDE_SUGGESTIONS action', (done) => {
-        actions.searchDocuments({searchTerm: 'batman', filters: {author: 'batman'}})(dispatch, getState)
-        .then(() => {
-          expect(dispatch).toHaveBeenCalledWith({type: types.HIDE_SUGGESTIONS});
-          done();
-        })
-        .catch(done.fail);
+      it('should dispatch a HIDE_SUGGESTIONS action', () => {
+        actions.searchDocuments({searchTerm: 'batman', filters: {author: 'batman'}})(dispatch, getState);
+        expect(dispatch).toHaveBeenCalledWith({type: types.HIDE_SUGGESTIONS});
       });
     });
 

@@ -11,18 +11,26 @@ import {
   Settings,
   AccountSettings,
   CollectionSettings,
+  NavlinksSettings,
   DocumentTypesList,
   EntityTypesList,
   RelationTypesList,
   ThesaurisList
 } from 'app/Settings';
 
+import Pages from 'app/Pages/Pages';
+import NewPage from 'app/Pages/NewPage';
+import EditPage from 'app/Pages/EditPage';
+import PageView from 'app/Pages/PageView';
+
 import ViewDocument from 'app/Viewer/ViewDocument';
 import EntityView from 'app/Entities/EntityView';
 import Uploads from 'app/Uploads/UploadsRoute';
 
 import EditTemplate from 'app/Templates/EditTemplate';
+import EditEntity from 'app/Templates/EditEntity';
 import NewTemplate from 'app/Templates/NewTemplate';
+import NewEntity from 'app/Templates/NewEntity';
 
 import EditThesauri from 'app/Thesauris/EditThesauri';
 import NewThesauri from 'app/Thesauris/NewThesauri';
@@ -38,24 +46,29 @@ export default (
     <Route path='settings' component={Settings}>
       <Route path='account' component={AccountSettings} />
       <Route path='collection' component={CollectionSettings} />
+      <Route path='navlinks' component={NavlinksSettings} />
+      <Route path='pages' component={Pages} />
+      <Route path='pages/new' component={NewPage} />
+      <Route path='pages/edit/:pageId' component={EditPage} />
       <Route path='documents' component={DocumentTypesList} />
       <Route path='documents/new' component={NewTemplate} />
       <Route path='documents/edit/:templateId' component={EditTemplate} />
       <Route path='entities' component={EntityTypesList} />
-      <Route path='entities/new' component={NewTemplate} />
-      <Route path='entities/edit/:templateId' component={EditTemplate} />
+      <Route path='entities/new' component={NewEntity} />
+      <Route path='entities/edit/:templateId' component={EditEntity} />
       <Route path='connections' component={RelationTypesList} />
       <Route path='connections/new' component={NewRelationType} />
       <Route path='connections/edit/:relationTypeId' component={EditRelationType} />
-      <Route path='thesauris' component={ThesaurisList} />
-      <Route path='thesauris/new' component={NewThesauri} />
-      <Route path='thesauris/edit/:thesauriId' component={EditThesauri} />
+      <Route path='dictionaries' component={ThesaurisList} />
+      <Route path='dictionaries/new' component={NewThesauri} />
+      <Route path='dictionaries/edit/:thesauriId' component={EditThesauri} />
     </Route>
     <Route path='uploads' component={Uploads} />
     <Route path='login' component={Login} />
     <Route path='resetpassword/:key' component={ResetPassword} />
     <Route path='document/:documentId' component={ViewDocument} />
     <Route path='entity/:entityId' component={EntityView} />
+    <Route path='page/:pageId' component={PageView} />
     <Route path="*" component={NoMatch} />
   </Route>
 );

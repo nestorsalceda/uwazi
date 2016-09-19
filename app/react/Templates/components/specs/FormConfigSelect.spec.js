@@ -11,7 +11,7 @@ describe('FormConfigSelect', () => {
   let props;
 
   beforeEach(() => {
-    thesauris = [{_id: 1, name: 'thesauri1'}, {_id: 2, name: 'thesauri2'}];
+    thesauris = [{_id: 1, name: 'thesauri1'}, {_id: 2, name: 'thesauri2'}, {_id: 3, name: 'Judge', type: 'template'}];
     props = {
       thesauris: Immutable.fromJS(thesauris),
       index: 0,
@@ -34,13 +34,18 @@ describe('FormConfigSelect', () => {
     expect(formFields.nodes[0].props.model).toBe('template.data.properties[0].label');
     expect(formFields.nodes[1].props.model).toBe('template.data.properties[0].required');
     expect(formFields.nodes[2].props.model).toBe('template.data.properties[0].filter');
+    expect(formFields.nodes[3].props.model).toBe('template.data.properties[0].showInCard');
 
     expect(component.find(SelectField).node.props.model).toBe('template.data.properties[0].content');
   });
 
-  it('should render the select with the thesauris', () => {
+  it('should render the select with the dictionaries and entities', () => {
     component = shallow(<FormConfigSelect {...props}/>);
-    expect(component.find(Select).node.props.options).toEqual(thesauris);
+    let expectedOptions = [
+      {label: 'Dictionaries', options: [thesauris[0], thesauris[1]]},
+      {label: 'Entities', options: [thesauris[2]]}
+    ];
+    expect(component.find(Select).props().options).toEqual(expectedOptions);
   });
 
   describe('validation', () => {

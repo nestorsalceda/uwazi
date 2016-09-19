@@ -14,6 +14,21 @@ export class FormConfigSelect extends Component {
     const thesauris = this.props.thesauris.toJS();
     const ptoperty = data.properties[index];
 
+    let optionGroups = [
+      {label: 'Dictionaries', options: []},
+      {label: 'Entities', options: []}
+    ];
+
+    thesauris.filter((thesauri) => {
+      return thesauri._id !== data._id;
+    }).forEach((thesauri) => {
+      if (thesauri.type === 'template') {
+        optionGroups[1].options.push(thesauri);
+        return;
+      }
+      optionGroups[0].options.push(thesauri);
+    });
+
     let labelClass = 'input-group';
     let labelKey = `properties.${index}.label`;
     let requiredLabel = formState.errors[labelKey + '.required'];
@@ -39,7 +54,7 @@ export class FormConfigSelect extends Component {
             <div className="input-group">
               <span className="input-group-addon">Thesauri</span>
               <SelectField model={`template.data.properties[${index}].content`}>
-                <Select options={thesauris} optionsLabel="name" optionsValue="_id"/>
+                <Select options={optionGroups} optionsLabel="name" optionsValue="_id"/>
               </SelectField>
             </div>
           </div>
@@ -65,7 +80,8 @@ export class FormConfigSelect extends Component {
                   </div>;
           }
         })()}
-        <div className="well">
+
+        <div className="well well-metadata-creator">
           <div className="row">
             <div className="col-sm-4">
               <FormField model={`template.data.properties[${index}].filter`}>
@@ -79,11 +95,30 @@ export class FormConfigSelect extends Component {
                 <i className="fa fa-question-circle"></i>
               </label>
             </div>
-            <div className="col-sm-8">
+            <div className="col-sm-8 border-bottom">
               <FilterSuggestions {...ptoperty} />
             </div>
           </div>
+
+          <div className="row">
+            <div className="col-sm-4">
+              <FormField model={`template.data.properties[${index}].showInCard`}>
+                <input id={'showInCard' + this.props.index} type="checkbox"/>
+              </FormField>
+              &nbsp;
+              <label htmlFor={'showInCard' + this.props.index}
+                     title="This property will appear in the library cards as part of the basic info.">
+                Show in cards
+                &nbsp;
+                <i className="fa fa-question-circle"></i>
+              </label>
+            </div>
+            <div className="col-sm-8 help">
+              Show this property in the library card's basic info.
+            </div>
+          </div>
         </div>
+
       </div>
     );
   }

@@ -23,7 +23,7 @@ export class ViewMetadataPanel extends Component {
     this.context.confirm({
       accept: () => {
         if (this.props.metadata.type === 'document') {
-          this.props.deleteDocument(this.props.metadata)
+          return this.props.deleteDocument(this.props.metadata)
           .then(() => {
             browserHistory.push('/');
           });
@@ -103,7 +103,7 @@ export class ViewMetadataPanel extends Component {
             if (docBeingEdited && this.props.metadata.type === 'entity') {
               return <EntityForm/>;
             }
-            return <ShowMetadata entity={metadata}/>;
+            return <ShowMetadata entity={metadata} showTitle={true} showType={true} />;
           })()}
         </div>
       </SidePanel>
@@ -131,16 +131,16 @@ ViewMetadataPanel.contextTypes = {
   confirm: PropTypes.func
 };
 
-const mapStateToProps = ({library}) => {
+const mapStateToProps = (state) => {
   return {
-    open: library.ui.get('selectedDocument') ? true : false,
-    docBeingEdited: !!library.metadata._id,
-    formState: library.metadataForm,
-    rawDoc: library.ui.get('selectedDocument') || Immutable.fromJS({}),
-    templates: library.filters.get('templates'),
-    metadata: formater.prepareMetadata(library.ui.get('selectedDocument') ? library.ui.get('selectedDocument').toJS() : {},
-                                       library.filters.get('templates').toJS(),
-                                       library.filters.get('thesauris').toJS())
+    open: state.library.ui.get('selectedDocument') ? true : false,
+    docBeingEdited: !!state.library.metadata._id,
+    formState: state.library.metadataForm,
+    rawDoc: state.library.ui.get('selectedDocument') || Immutable.fromJS({}),
+    templates: state.templates,
+    metadata: formater.prepareMetadata(state.library.ui.get('selectedDocument') ? state.library.ui.get('selectedDocument').toJS() : {},
+                                       state.templates.toJS(),
+                                       state.thesauris.toJS())
   };
 };
 

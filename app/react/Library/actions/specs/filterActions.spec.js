@@ -9,56 +9,47 @@ import libraryHelper from 'app/Library/helpers/libraryFilters';
 describe('filterActions', () => {
   let templates = ['templates'];
   let thesauris = ['thesauris'];
-  let documentTypes = {a: true, b: false};
+  let documentTypes = ['a', 'b'];
   let libraryFilters;
   let dispatch;
   let getState;
   let store;
   let search;
-  let state;
+  let filtersState;
 
   beforeEach(() => {
     libraryFilters = [{name: 'author'}, {name: 'country'}];
     search = {searchTerm: '', filters: {author: 'RR Martin', country: ''}};
-    state = {
+    filtersState = {
       documentTypes,
-      templates,
-      thesauris,
       properties: libraryFilters,
       allDocumentTypes: false
     };
 
-    store = {library: {filters: Immutable.fromJS(state)}, search};
+    store = {
+      library: {filters: Immutable.fromJS(filtersState)},
+      search,
+      templates: Immutable.fromJS(templates),
+      thesauris: Immutable.fromJS(thesauris)
+    };
 
     spyOn(libraryHelper, 'libraryFilters').and.returnValue(libraryFilters);
+    spyOn(libraryHelper, 'populateOptions').and.returnValue(libraryFilters);
     dispatch = jasmine.createSpy('dispatch');
     spyOn(formActions, 'change').and.returnValue('FILTERS_UPDATED');
     getState = jasmine.createSpy('getState').and.returnValue(store);
   });
 
-  describe('filterDocumentType', () => {
-    it('should dispatch an action SET_LIBRARY_FILTERS with the given type', () => {
-      actions.filterDocumentType('a')(dispatch, getState);
-      expect(libraryHelper.libraryFilters).toHaveBeenCalledWith(templates, {a: false, b: false}, thesauris);
-      expect(dispatch).toHaveBeenCalledWith({type: types.SET_LIBRARY_FILTERS, libraryFilters, documentTypes: {a: false, b: false}});
+  describe('filterDocumentTypes', () => {
+    it('should dispatch an action SET_LIBRARY_FILTERS with the given types', () => {
+      actions.filterDocumentTypes(['a'])(dispatch, getState);
+      expect(libraryHelper.libraryFilters).toHaveBeenCalledWith(templates, ['a']);
+      expect(libraryHelper.populateOptions).toHaveBeenCalledWith(libraryFilters, thesauris);
+      expect(dispatch).toHaveBeenCalledWith({type: types.SET_LIBRARY_FILTERS, libraryFilters, documentTypes: ['a']});
     });
 
     it('should call form actions change with the new filters', () => {
-      actions.filterDocumentType('a')(dispatch, getState);
-      expect(formActions.change).toHaveBeenCalledWith('search.filters', {author: 'RR Martin', country: ''});
-      expect(dispatch).toHaveBeenCalledWith('FILTERS_UPDATED');
-    });
-  });
-
-  describe('filterAllDocumentTypes', () => {
-    it('should dispatch an action SET_LIBRARY_FILTERS with the given value', () => {
-      actions.filterAllDocumentTypes(true)(dispatch, getState);
-      expect(libraryHelper.libraryFilters).toHaveBeenCalledWith(templates, {a: true, b: true}, thesauris);
-      expect(dispatch).toHaveBeenCalledWith({type: types.SET_LIBRARY_FILTERS, libraryFilters, documentTypes: {a: true, b: true}});
-    });
-
-    it('should call form actions change with the new filters', () => {
-      actions.filterAllDocumentTypes(true)(dispatch, getState);
+      actions.filterDocumentTypes(['a'])(dispatch, getState);
       expect(formActions.change).toHaveBeenCalledWith('search.filters', {author: 'RR Martin', country: ''});
       expect(dispatch).toHaveBeenCalledWith('FILTERS_UPDATED');
     });
@@ -76,7 +67,7 @@ describe('filterActions', () => {
       expect(dispatch).toHaveBeenCalledWith({
         type: types.SET_LIBRARY_FILTERS,
         libraryFilters: [],
-        documentTypes: {a: false, b: false}
+        documentTypes: []
       });
     });
 
@@ -104,8 +95,8 @@ describe('filterActions', () => {
 
     describe('when a property is active', () => {
       it('should deactivate it', () => {
-        state.properties[0].active = true;
-        store.library.filters = Immutable.fromJS(state);
+        filtersState.properties[0].active = true;
+        store.library.filters = Immutable.fromJS(filtersState);
 
         actions.toggleFilter('author')(dispatch, getState);
         expect(dispatch).toHaveBeenCalledWith({
@@ -119,7 +110,7 @@ describe('filterActions', () => {
 
   describe('activateFilter', () => {
     it('should activate the filter', () => {
-      actions.activateFilter('author')(dispatch, getState);
+      actions.activateFilter('author', true)(dispatch, getState);
       expect(dispatch).toHaveBeenCalledWith({
         type: types.UPDATE_LIBRARY_FILTERS,
         libraryFilters: [{name: 'author', active: true},

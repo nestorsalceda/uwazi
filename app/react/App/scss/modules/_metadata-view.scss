@@ -24,6 +24,26 @@ aside {
       float: left;
       width: 100%;
       margin: 0;
+      > ul {
+        padding: 0;
+        margin: 0;
+      }
+      > ul li {
+        display: inline-block;
+        margin: 5px 10px 0 0;
+        &:not(:last-child):after {
+          content: ',';
+        }
+      }
+    }
+    a {
+      color: $c-black;
+      border-bottom: 1px dotted $c-grey;
+      text-decoration: none !important;
+
+      &:hover {
+        border-color: $c-black;
+      }
     }
   }
   .btn-block {

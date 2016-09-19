@@ -24,10 +24,10 @@ function getOptions(property, thesauris) {
   }
 }
 
-export function libraryFilters(templates, documentTypes, thesauris) {
+export function libraryFilters(templates, documentTypes = []) {
   let filters = [];
   let selectedTemplates = templates.filter((template) => {
-    return documentTypes[template._id];
+    return documentTypes.includes(template._id);
   });
 
   if (selectedTemplates.length) {
@@ -38,24 +38,60 @@ export function libraryFilters(templates, documentTypes, thesauris) {
     });
   }
 
+  return filters;
+}
+
+export function populateOptions(filters, thesauris) {
   filters.map((property) => {
     if (property.content) {
       property.options = getOptions(property, thesauris);
     }
+
     return property;
   });
 
   return filters;
 }
 
-export function generateDocumentTypes(templates = [], value = false) {
-  return templates.reduce((docTypes, templ) => {
-    docTypes[templ._id] = value;
-    return docTypes;
-  }, {});
+export function URLQueryToState(query, templates, thesauris) {
+  let properties = libraryFilters(templates, query.types);
+  let {searchTerm, filters = {}, order = 'desc', sort = 'title.raw'} = query;
+  properties = populateOptions(properties, thesauris).map((property) => {
+    if (filters[property.name]) {
+      property.active = true;
+    }
+    filters[property.name] = filters[property.name] ? filters[property.name].value : [];
+    return property;
+  });
+
+  return {properties, search: {searchTerm, filters, order, sort}};
+}
+
+export function parseWithAggregations(filters, aggregations) {
+  return filters.map((property) => {
+    if (property.content) {
+      property.options = property.options.map((option) => {
+        let aggregation;
+        if (aggregations[property.name]) {
+          aggregation = aggregations[property.name].buckets
+          .find((bucket) => bucket.key.toString() === option.id.toString());
+        }
+
+        if (aggregation) {
+          option.results = aggregation.filtered.doc_count;
+        }
+
+        return option;
+      }).filter((option) => option.results);
+    }
+
+    return property;
+  });
 }
 
 export default {
-  generateDocumentTypes,
-  libraryFilters
+  libraryFilters,
+  URLQueryToState,
+  populateOptions,
+  parseWithAggregations
 };

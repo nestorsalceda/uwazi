@@ -2,8 +2,10 @@ import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import UTCToLocal from 'app/Layout/UTCToLocal';
+import PrintDate from 'app/Layout/PrintDate';
 import {selectDocument, unselectDocument} from '../actions/libraryActions';
+import {formater} from 'app/Metadata';
+import marked from 'marked';
 
 import {RowList, ItemFooter, ItemName} from 'app/Layout/Lists';
 
@@ -14,6 +16,27 @@ export class Doc extends Component {
       return this.props.unselectDocument();
     }
     this.props.selectDocument(this.props.doc);
+  }
+
+  formatMetadata(populatedMetadata, creationDate) {
+    let metadata = populatedMetadata
+    .filter(p => p.showInCard && (p.value && p.value.length > 0 || p.markdown))
+    .map((property, index) => {
+      let value = typeof property.value !== 'object' ? property.value : property.value.map(d => d.value).join(', ');
+      if (property.markdown) {
+        value = <div className="markdownViewer" dangerouslySetInnerHTML={{__html: marked(property.markdown, {sanitize: true})}}/>;
+      }
+      return (
+        <dl key={index}>
+          <dt>{property.label}</dt>
+          <dd>{value}</dd>
+        </dl>
+      );
+    });
+
+    let creationMetadata = <dl><dt><i>Upload date</i></dt><dd><PrintDate utc={creationDate} toLocal={true} /></dd></dl>;
+
+    return metadata.length || populatedMetadata.filter(p => p.showInCard).length ? metadata : creationMetadata;
   }
 
   render() {
@@ -40,24 +63,26 @@ export class Doc extends Component {
       className = 'item-entity';
     }
 
+    const populatedMetadata = formater.prepareMetadata(this.props.doc, this.props.templates.toJS(), this.props.thesauris.toJS()).metadata;
+    const metadata = this.formatMetadata(populatedMetadata, creationDate);
+
     return (
       <RowList.Item active={active} onClick={this.select.bind(this, active)} className={className}>
         <div className="item-info">
           <ItemName>{title}</ItemName>
+        </div>
+        <div className="item-metadata">
+          {metadata}
+        </div>
+        <ItemFooter>
           <span className={typeIndex}>
             <i className={`item-type__icon fa ${icon}`}></i>
             <span className="item-type__name">{type}</span>
           </span>
-        </div>
-        <div className="item-metadata">
-            <dl>
-                <dt>Upload date</dt>
-                <dd><UTCToLocal utc={creationDate}/></dd>
-            </dl>
-        </div>
-        <ItemFooter>
           <Link to={documentViewUrl} className="item-shortcut">
-            <i className="fa fa-external-link"></i>
+            <span className="itemShortcut-arrow">
+              <i className="fa fa-external-link"></i>
+            </span>
           </Link>
         </ItemFooter>
       </RowList.Item>
@@ -70,15 +95,16 @@ Doc.propTypes = {
   selectedDocument: PropTypes.string,
   selectDocument: PropTypes.func,
   unselectDocument: PropTypes.func,
-  creationDate: PropTypes.number,
-  templates: PropTypes.object
+  templates: PropTypes.object,
+  thesauris: PropTypes.object
 };
 
 
-export function mapStateToProps({library}) {
+export function mapStateToProps(state) {
   return {
-    selectedDocument: library.ui.get('selectedDocument') ? library.ui.get('selectedDocument').get('_id') : '',
-    templates: library.filters.get('templates')
+    selectedDocument: state.library.ui.get('selectedDocument') ? state.library.ui.get('selectedDocument').get('_id') : '',
+    templates: state.templates,
+    thesauris: state.thesauris
   };
 }
 

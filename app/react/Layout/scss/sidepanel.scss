@@ -12,14 +12,10 @@ $c-sidebar: $c-white;
   right: 0;
   top: 54px;
   bottom: 0;
-  //border-left: 1px solid $c-grey;
-  box-shadow: 0 0 10px $c-grey;
+  border-left: 1px solid $c-grey-light;
   background-color: $c-sidebar;
   max-width: 320px - 54px;
   transition: right 500ms;
-/*
-  max-width: 320px;
-*/
   width: 90%;
   &.is-hidden {
     right: -90%;
@@ -105,6 +101,7 @@ $c-sidebar: $c-white;
 .sidepanel-body {
   flex: 1;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .sidepanel-header,
@@ -145,7 +142,8 @@ $c-sidebar: $c-white;
 .sidepanel-footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  left: 15px;
+  right: 15px;
   padding-top: 0;
   text-align: center;
   background: linear-gradient(transparent 0%, $c-white 70%, $c-white 100%);

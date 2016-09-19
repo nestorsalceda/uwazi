@@ -7,6 +7,7 @@ import sanitizeResponse from '../utils/sanitizeResponse';
 
 export default {
   search(query) {
+    //console.log(query);
     let documentsQuery = queryBuilder()
     .fullTextSearch(query.searchTerm, query.fields)
     .filterMetadata(query.filters)
@@ -24,6 +25,10 @@ export default {
       documentsQuery.limit(query.limit);
     }
 
+    if (query.aggregations) {
+      documentsQuery.aggregations(query.aggregations);
+    }
+
     return elastic.search({index: elasticIndex, body: documentsQuery.query()})
     .then((response) => {
       let rows = response.hits.hits.map((hit) => {
@@ -32,7 +37,7 @@ export default {
         return result;
       });
 
-      return {rows, totalRows: response.hits.total};
+      return {rows, totalRows: response.hits.total, aggregations: response.aggregations};
     })
     .catch(console.log);
   },

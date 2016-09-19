@@ -10,6 +10,8 @@ export class SettingsNavigation extends Component {
         <div className="list-group">
           <Link to='/settings/account' activeClassName="active" className="list-group-item">Account</Link>
           <Link to='/settings/collection' activeClassName="active" className="list-group-item">Collection</Link>
+          <Link to='/settings/navlinks' activeClassName="active" className="list-group-item">Menu</Link>
+          <Link to='/settings/pages' activeClassName="active" className="list-group-item">Pages</Link>
         </div>
       </div>
       <div className="panel panel-default">
@@ -17,7 +19,7 @@ export class SettingsNavigation extends Component {
         <div className="list-group">
           <Link to='/settings/documents' activeClassName="active" className="list-group-item">Documents</Link>
           <Link to='/settings/connections' activeClassName="active" className="list-group-item">Connections</Link>
-          <Link to='/settings/thesauris' activeClassName="active" className="list-group-item">Thesauris</Link>
+          <Link to='/settings/dictionaries' activeClassName="active" className="list-group-item">Dictionaries</Link>
           <Link to='/settings/entities' activeClassName="active" className="list-group-item">Entities</Link>
         </div>
       </div>

@@ -3,60 +3,51 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Field, Form} from 'react-redux-form';
 
-import {Select, SelectField, DateRange} from 'app/Forms';
+import {FormField, MultiSelect, DateRange} from 'app/Forms';
 import FormGroup from 'app/DocumentForm/components/FormGroup';
 import {searchDocuments} from 'app/Library/actions/libraryActions';
 import {toggleFilter, activateFilter} from 'app/Library/actions/filterActions';
+import libraryHelper from 'app/Library/helpers/libraryFilters';
+import {store} from 'app/store';
 
 export class FiltersForm extends Component {
 
+  onChange(e) {
+    if (e.target.type === 'checkbox') {
+      this.props.searchDocuments(store.getState().search);
+    }
+  }
+
   render() {
     let fields = this.props.fields.toJS();
+    fields = libraryHelper.parseWithAggregations(fields, this.props.aggregations.toJS())
+    .filter((field) => (field.type !== 'select' && field.type !== 'multiselect') || field.options.length);
     return (
       <div className="filters-box">
         {(() => {
           let documentTypes = this.props.documentTypes.toJS();
           let templates = this.props.templates.toJS();
-          let activeTypes = templates.reduce((result, template) => {
-            if (documentTypes[template._id]) {
-              result.push(template.name);
-            }
-            return result;
-          }, []);
-          let formatedTypes = activeTypes.join(', ').replace(/(,) (\w* *\w*$)/, ' and $2');
+          let activeTypes = templates.filter((template) => documentTypes.includes(template._id));
 
-          if (activeTypes.length === 0) {
+          if (documentTypes.length === 0) {
             return <div className="empty-state select-type">
-                    <i className="fa fa-arrow-up"></i><b>Filter the results</b>
-                    <p>Select at least one type of document to start filtering the results.</p>
+                    <i className="fa fa-arrow-up"></i><b>Select to start filtering</b>
                   </div>;
           }
 
           if (activeTypes.length > 0 && fields.length === 0) {
             return <div className="empty-state no-filters">
                     <i className="fa fa-close"></i><b>No common filters</b>
-                    <p>The combination of document types has no filters in common.</p>
-                  </div>;
-          }
-
-          if (activeTypes.length > 1 && fields.length > 0) {
-            return <div className="title">
-                    <i className="fa fa-tag"></i>Common filters for<b> {formatedTypes}</b>
-                  </div>;
-          }
-          if (activeTypes.length === 1 && fields.length > 0) {
-            return <div className="title">
-                    <i className="fa fa-tag"></i>Filters for<b> {formatedTypes}</b>
                   </div>;
           }
         })()}
-        <Form model="search" id="filtersForm" onSubmit={this.props.searchDocuments}>
+        <Form model="search" id="filtersForm" onSubmit={this.props.searchDocuments} onChange={this.onChange.bind(this)}>
         {fields.map((property, index) => {
           let propertyClass = property.active ? 'search__filter is-active' : 'search__filter';
-          if (property.type === 'select') {
+          if (property.type === 'select' || property.type === 'multiselect') {
             return (
               <FormGroup key={index}>
-                <SelectField model={`search.filters.${property.name}`} >
+                <FormField model={`search.filters.${property.name}`}>
                   <ul className={propertyClass}>
                     <li>
                       {property.label}
@@ -64,10 +55,14 @@ export class FiltersForm extends Component {
                       <figure className="switcher" onClick={() => this.props.toggleFilter(property.name)}></figure>
                     </li>
                     <li className="wide">
-                      <Select options={property.options} optionsValue="id" onChange={() => this.props.activateFilter(property.name)} />
+                      <MultiSelect
+                        prefix={property.name}
+                        options={property.options}
+                        optionsValue="id" onChange={(options) => this.props.activateFilter(property.name, !!options.length)}
+                      />
                     </li>
                   </ul>
-                </SelectField>
+                </FormField>
               </FormGroup>
               );
           }
@@ -84,8 +79,8 @@ export class FiltersForm extends Component {
                     <DateRange
                       fromModel={`search.filters.${property.name}.from`}
                       toModel={`search.filters.${property.name}.to`}
-                      fromChange={() => this.props.activateFilter(property.name)}
-                      toChange={() => this.props.activateFilter(property.name)}
+                      fromChange={() => this.props.activateFilter(property.name, true)}
+                      toChange={() => this.props.activateFilter(property.name, true)}
                     />
                   </li>
                 </ul>
@@ -104,7 +99,7 @@ export class FiltersForm extends Component {
                     </label>
                   </li>
                   <li className="wide">
-                    <input className="form-control" onChange={() => this.props.activateFilter(property.name)} />
+                    <input className="form-control" onChange={(e) => this.props.activateFilter(property.name, !!e.target.value)} />
                   </li>
                 </ul>
               </Field>
@@ -119,6 +114,7 @@ export class FiltersForm extends Component {
 
 FiltersForm.propTypes = {
   templates: PropTypes.object,
+  aggregations: PropTypes.object,
   fields: PropTypes.object.isRequired,
   searchDocuments: PropTypes.func,
   toggleFilter: PropTypes.func,
@@ -130,7 +126,8 @@ FiltersForm.propTypes = {
 export function mapStateToProps(state) {
   return {
     fields: state.library.filters.get('properties'),
-    templates: state.library.filters.get('templates'),
+    aggregations: state.library.aggregations,
+    templates: state.templates,
     search: state.search,
     documentTypes: state.library.filters.get('documentTypes')
   };
