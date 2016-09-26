@@ -1,15 +1,12 @@
 version: '2'
 services:
   uwazi:
-    build:
-      context: .
-      dockerfile: Dockerfile-development
+    image: nestorsalceda/uwazi
     ports:
      - "3000:3000"
     depends_on:
      - couchdb
      - elasticsearch
-     - logstash
     environment:
      - COUCHDB_URL=http://couchdb:5984
      - ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -18,7 +15,7 @@ services:
      - API_URL=http://localhost:3000
     volumes:
       - .:/opt/uwazi
-    command: "runlocal"
+    command: "demo"
   couchdb:
     image: klaemo/couchdb:1.6
     ports:
@@ -32,6 +29,5 @@ services:
     volumes:
       - ./logstash/docker:/config-dir
     depends_on:
-     - couchdb
-     - elasticsearch
+     - uwazi
     command: "logstash -f /config-dir/logstash.conf"
