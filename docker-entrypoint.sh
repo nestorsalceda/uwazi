@@ -20,6 +20,12 @@ if [ "$1" = "uwazi" ]; then
     exec node server "$@"
 fi
 
+if [ "$1" = "demo" ]; then
+    cd couchdb && ./blank_state.sh $DATABASE_NAME && cd ..
+    cd couchdb && ./restore_views.sh $DATABASE_NAME && cd ..
+    exec node server "$@"
+fi
+
 if [ "$1" = "runlocal" ]; then
     cd couchdb && ./blank_state.sh $DATABASE_NAME && cd ..
     cd couchdb && ./restore_views.sh $DATABASE_NAME && cd ..
