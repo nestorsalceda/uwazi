@@ -1,0 +1,50 @@
+.Dropdown {
+  position: absolute;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+}
+
+.Dropdown-label {
+  margin-right: 5px;
+}
+
+.Dropdown-list {
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  list-style-type: none;
+}
+
+.Dropdown-option {
+  display: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.is-active {
+    display: block;
+    font-weight: bold;
+    color: $c-primary;
+  }
+
+  .fa {
+    margin-left: 3px;
+  }
+
+}
+
+.Dropdown.is-active {
+  padding: 15px;
+  margin: -15px;
+  border-radius: 4px;
+  background: $c-white;
+  box-shadow: $shadow;
+
+  .Dropdown-option {
+    display: block;
+  }
+}

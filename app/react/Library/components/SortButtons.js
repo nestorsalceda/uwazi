@@ -35,17 +35,22 @@ export class SortButtons extends Component {
     let sortingRecent = search.sort === 'creationDate';
 
     return (
-      <p className="col-sm-5">
-        Sort by
-        <span className={sortingTitle ? 'active' : ''} onClick={() => this.sort('title.raw')}>
-          A-Z
-          {sortingTitle ? <i className={'fa fa-caret-' + order}></i> : ''}
-        </span>
-        <span className={sortingRecent ? 'active' : ''} onClick={() => this.sort('creationDate')}>
-          Recent
-          {sortingRecent ? <i className={'fa fa-caret-' + order}></i> : ''}
-        </span>
-      </p>
+      <div className="Dropdown u-floatRight">
+        <span className="Dropdown-label">Sort by</span>
+        <ul className="Dropdown-list">
+          <li className="Dropdown-option">Item 1</li>
+          <li className="Dropdown-option">Item 2</li>
+          <li className="Dropdown-option">Item 3</li>
+          <li className={'Dropdown-option' + (sortingTitle ? ' is-active' : '')} onClick={() => this.sort('title.raw')}>
+            A-Z
+            {sortingTitle ? <i className={'fa fa-caret-' + order}></i> : ''}
+          </li>
+          <li className={'Dropdown-option' + (sortingRecent ? ' is-active' : '')} onClick={() => this.sort('creationDate')}>
+            Recent
+            {sortingRecent ? <i className={'fa fa-caret-' + order}></i> : ''}
+          </li>
+        </ul>
+      </div>
     );
   }
 }
