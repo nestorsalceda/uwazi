@@ -57,7 +57,7 @@ export class Doc extends Component {
     return (
       <RowList.Item active={active} onClick={this.select.bind(this, active)} className={className}>
         <div className="item-info">
-          <Icon className="item-icon item-icon-center" data={icon} size="sm"/>
+          <Icon className="item-icon item-icon-center" data={icon} size="xs"/>
           <ItemName>{title}</ItemName>
         </div>
         <div className="item-metadata">

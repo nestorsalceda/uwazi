@@ -39,6 +39,9 @@ $c-sidebar: $c-white;
     font-family: $f-special;
     font-size: $f-size-lg;
   }
+  .item-icon {
+    top: -2px;
+  }
   .item-icon.item-icon-center {
     & img {
       vertical-align: bottom;

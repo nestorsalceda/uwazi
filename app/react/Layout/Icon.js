@@ -24,13 +24,13 @@ function getFaSize(size) {
   case 'xs':
     return '';
   case 'sm':
-    return 'fa-lg';
+    return 'fa-sm';
   case 'md':
-    return 'fa-2x';
+    return 'fa-md';
   case 'lg':
-    return 'fa-2x';
+    return 'fa-lg';
   case 'xlg':
-    return 'fa-2x';
+    return 'fa-xlg';
   default:
     return '';
   }
@@ -71,4 +71,3 @@ Icon.propTypes = {
 };
 
 export default connect()(Icon);
-
