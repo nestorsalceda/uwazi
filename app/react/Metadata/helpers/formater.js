@@ -7,6 +7,38 @@ export default {
     return {label: property.label, value, showInCard};
   },
 
+  multidate(property, timestamps, showInCard) {
+    let value = timestamps.map((timestamp) => {
+      return {value: moment.utc(timestamp, 'X').format('MMM DD YYYY')};
+    });
+    return {label: property.label, value, showInCard};
+  },
+
+  multidaterange(property, dateranges, showInCard) {
+    let value = dateranges.map((range) => {
+      let from = moment.utc(range.from, 'X').format('MMM DD YYYY');
+      let to = moment.utc(range.to, 'X').format('MMM DD YYYY');
+      return {value: `${from} - ${to}`};
+    });
+    return {label: property.label, value, showInCard};
+  },
+
+  getSelectOptions(option, thesauriType) {
+    let value = '';
+    let icon;
+    if (option) {
+      value = option.label;
+      icon = option.icon;
+    }
+
+    let url;
+    if (option && thesauriType === 'template') {
+      url = `/entity/${option.id}`;
+    }
+
+    return {value, url, icon};
+  },
+
   select(property, thesauriValue, thesauris, showInCard) {
     let thesauri = thesauris.find(t => t._id === property.content);
 
@@ -14,17 +46,9 @@ export default {
       return v.id.toString() === thesauriValue.toString();
     });
 
-    let value = '';
-    if (option) {
-      value = option.label;
-    }
+    const {value, url, icon} = this.getSelectOptions(option, thesauri.type);
 
-    let url;
-    if (option && thesauri.type === 'template') {
-      url = `/entity/${option.id}`;
-    }
-
-    return {label: property.label, value, url, showInCard};
+    return {label: property.label, value, icon, url, showInCard};
   },
 
   multiselect(property, thesauriValues, thesauris, showInCard) {
@@ -35,20 +59,25 @@ export default {
         return v.id.toString() === thesauriValue.toString();
       });
 
-      let value = '';
-      if (option) {
-        value = option.label;
-      }
-
-      let url;
-      if (option && thesauri.type === 'template') {
-        url = `/entity/${option.id}`;
-      }
-
-      return {value, url};
+      return this.getSelectOptions(option, thesauri.type);
     });
 
     return {label: property.label, value: values, showInCard};
+  },
+
+  nested(property, rows, showInCard) {
+    if (!rows[0]) {
+      return {label: property.label, value: '', showInCard};
+    }
+
+    let keys = Object.keys(rows[0]);
+    let result = keys.join(' | ') + '\n';
+    result += keys.map(() => '-').join(' | ') + '\n';
+    result += rows.map((row) => {
+      return keys.map((key) => row[key].join(', ')).join(' | ');
+    }).join('\n');
+
+    return this.markdown(property, result, showInCard);
   },
 
   markdown(property, value, showInCard) {
@@ -78,8 +107,20 @@ export default {
         return this.date(property, value, showInCard);
       }
 
+      if (property.type === 'multidate' && value) {
+        return this.multidate(property, value, showInCard);
+      }
+
+      if (property.type === 'multidaterange' && value) {
+        return this.multidaterange(property, value, showInCard);
+      }
+
       if (property.type === 'markdown' && value) {
         return this.markdown(property, value, showInCard);
+      }
+
+      if (property.type === 'nested' && value) {
+        return this.nested(property, value, showInCard);
       }
 
       return {label: property.label, value, showInCard};

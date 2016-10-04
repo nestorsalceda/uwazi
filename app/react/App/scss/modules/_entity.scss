@@ -1,3 +1,7 @@
+.entity-content {
+  overflow-y: scroll;
+}
+
 .entity-metadata {
   left: 0 !important;
   right: auto !important;
@@ -12,13 +16,18 @@
   .sidepanel-header {
     display: none;
   }
-  .sidepanel-body {
-    .item-name {
-      padding: 30px 30px 0;
-    }
-    .item-type {
-      margin-left: 30px;
-    }
+  .item-info {
+    padding: 30px;
+  }
+  .item-icon {
+    margin: -7px 10px 0 0;
+  }
+  .item-name {
+    font-weight: 300;
+    font-size: $f-size-xl !important;
+  }
+  .view {
+    padding: 15px;
   }
   dt {
     width: 25%;
@@ -45,11 +54,15 @@
   }
 
   .item-group {
-    justify-content: space-between;
+    padding: 15px;
   }
   @media(min-width: 1024px) {
     .item {
-      width: 48% !important;
+      width: 49% !important;
+      margin-right: 2%;
+    }
+    .item:nth-child(2n+1) {
+      margin-right: 0;
     }
   }
   .item-metadata {

@@ -1,5 +1,9 @@
 import {actions as formActions} from 'react-redux-form';
 
+export function resetReduxForm(form) {
+  return formActions.reset(form);
+}
+
 export function loadInReduxForm(form, onlyReadEntity, templates) {
   return function (dispatch) {
     //test
@@ -20,6 +24,15 @@ export function loadInReduxForm(form, onlyReadEntity, templates) {
       }
 
       if (!entity.metadata[property.name] && property.type === 'multiselect') {
+        entity.metadata[property.name] = [];
+      }
+      if (!entity.metadata[property.name] && property.type === 'nested') {
+        entity.metadata[property.name] = [];
+      }
+      if (!entity.metadata[property.name] && property.type === 'multidate') {
+        entity.metadata[property.name] = [];
+      }
+      if (!entity.metadata[property.name] && property.type === 'multidaterange') {
         entity.metadata[property.name] = [];
       }
     });

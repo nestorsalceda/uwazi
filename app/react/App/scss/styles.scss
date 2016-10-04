@@ -1,3 +1,4 @@
+@import "config/theme";
 @import "config/typography";
 @import "config/colors";
 @import "config/materials";
@@ -30,5 +31,7 @@
 @import "modules/uploads";
 @import "modules/login";
 @import "modules/markdown";
+
+@import "../../Timeline/scss/timeline";
 
 @import "transitions/transitions";

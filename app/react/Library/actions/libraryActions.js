@@ -64,8 +64,13 @@ export function searchDocuments(readOnlySearch, limit) {
     const filters = getState().library.filters.toJS();
     const search = Object.assign({}, readOnlySearch);
     search.aggregations = filters.properties
-    .filter((property) => property.type === 'select' || property.type === 'multiselect')
-    .map((property) => property.name);
+    .filter((property) => property.type === 'select' || property.type === 'multiselect' || property.type === 'nested')
+    .map((property) => {
+      if (property.type === 'nested') {
+        return {name: property.name, nested: true, nestedProperties: property.nestedProperties};
+      }
+      return {name: property.name, nested: false};
+    });
 
     search.filters = {};
     filters.properties.forEach((property) => {
@@ -73,11 +78,17 @@ export function searchDocuments(readOnlySearch, limit) {
         return;
       }
       let type = 'text';
-      if (property.type === 'date') {
+      if (property.type === 'date' || property.type === 'multidate') {
         type = 'range';
       }
       if (property.type === 'select' || property.type === 'multiselect') {
         type = 'multiselect';
+      }
+      if (property.type === 'nested') {
+        type = 'nested';
+      }
+      if (property.type === 'multidaterange') {
+        type = 'nestedrange';
       }
       search.filters[property.name] = {value: readOnlySearch.filters[property.name], type};
     });

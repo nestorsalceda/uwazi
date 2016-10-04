@@ -23,7 +23,10 @@ describe('documentQueryBuilder', () => {
 
   describe('filterMetadata', () => {
     it('should add filter conditions', () => {
-      let baseQuery = queryBuilder().filterMetadata({property1: {value: 'value1', type: 'text'}, property2:  {value: 'value2', type: 'text'}}).query();
+      let baseQuery = queryBuilder().filterMetadata({
+        property1: {value: 'value1', type: 'text'},
+        property2: {value: 'value2', type: 'text'}
+      }).query();
       expect(baseQuery.filter.bool.must[0]).toEqual({match: {'doc.metadata.property1': 'value1'}});
       expect(baseQuery.filter.bool.must[1]).toEqual({match: {'doc.metadata.property2': 'value2'}});
     });
@@ -70,7 +73,7 @@ describe('documentQueryBuilder', () => {
     });
 
     it('should add aggregations to the query with the current filters', () => {
-      let baseQuery = queryBuilder().aggregations(['property1', 'property2']).query();
+      let baseQuery = queryBuilder().aggregations([{name: 'property1'}, {name: 'property2'}]).query();
       let property1Aggregation = {
         terms: {
           field: 'doc.metadata.property1.raw',
@@ -86,6 +89,7 @@ describe('documentQueryBuilder', () => {
           }
         }
       };
+
       expect(baseQuery.aggregations.property1).toEqual(property1Aggregation);
     });
   });

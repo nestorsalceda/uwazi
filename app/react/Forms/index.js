@@ -5,6 +5,12 @@ import FormField from './components/FormField';
 import FormGroup from './components/FormGroup';
 import MultiSelect from './components/MultiSelect';
 import MarkDown from './components/MarkDown';
+import Nested, {NestedField} from './components/Nested';
+import NestedMultiselect from './components/NestedMultiselect';
+import MultiDate from './components/MultiDate';
+import MultiDateRange from './components/MultiDateRange';
+import DropdownList from './components/DropdownList';
+import IconSelector from './components/IconSelector';
 
 export {
   Select,
@@ -15,5 +21,12 @@ export {
   DatePickerField,
   DateRange,
   MultiSelect,
-  MarkDown
+  MarkDown,
+  Nested,
+  NestedField,
+  NestedMultiselect,
+  MultiDate,
+  MultiDateRange,
+  DropdownList,
+  IconSelector
 };

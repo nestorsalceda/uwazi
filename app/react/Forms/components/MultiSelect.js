@@ -1,17 +1,18 @@
 import React, {Component, PropTypes} from 'react';
 import {createFieldClass, controls} from 'react-redux-form';
 import ShowIf from 'app/App/ShowIf';
+import {Icon} from 'app/Layout/Icon';
 
 export class MultiSelect extends Component {
 
   constructor(props) {
     super(props);
     this.state = {filter: '', showAll: false};
-    this.optionsToShow = 5;
+    this.optionsToShow = typeof props.optionsToShow !== 'undefined' ? props.optionsToShow : 5;
   }
 
   change(value) {
-    let newValues = this.props.value.slice(0);
+    let newValues = this.props.value ? this.props.value.slice(0) : [];
     if (newValues.includes(value)) {
       newValues = newValues.filter((val) => val !== value);
       return this.props.onChange(newValues);
@@ -75,12 +76,6 @@ export class MultiSelect extends Component {
       <ul className="multiselect is-active">
       <li className="multiselectActions">
         <ShowIf if={this.props.options.length > this.optionsToShow}>
-          <button onClick={this.showAll.bind(this)} className="btn btn-xs btn-default">
-            <i className={this.state.showAll ? 'fa fa-caret-up' : 'fa fa-caret-down'}></i>
-            <span>{this.state.showAll ? 'Show less' : 'Show all'}</span>
-          </button>
-        </ShowIf>
-        <ShowIf if={this.props.options.length > this.optionsToShow}>
           <div className="form-group">
             <i className={this.state.filter ? 'fa fa-times-circle' : 'fa fa-search'} onClick={this.resetFilter.bind(this)}></i>
             <input className="form-control" type='text' placeholder="Search item" value={this.state.filter} onChange={this.filter.bind(this)}/>
@@ -102,14 +97,12 @@ export class MultiSelect extends Component {
               htmlFor={prefix + option[optionsValue]}>
                 <i className="multiselectItem-icon fa fa-square-o"></i>
                 <i className="multiselectItem-icon fa fa-check"></i>
-                <span>{option[optionsLabel]}&nbsp;</span>
+                <span>
+                  <Icon className="item-icon" data={option.icon}/>
+                  {option[optionsLabel]}&nbsp;
+                </span>
                 <ShowIf if={typeof option.results !== 'undefined'}>
                   <span className="multiselectItem-results">{option.results}
-                    {/** /}
-                    <ShowIf if={typeof option.total !== 'undefined' && option.results !== option.total}>
-                     <span>&nbsp;of {option.total}</span>
-                    </ShowIf>
-                    {/**/}
                   </span>
                 </ShowIf>
             </label>
@@ -117,10 +110,10 @@ export class MultiSelect extends Component {
         })}
 
         <li className="multiselectActions">
-          <ShowIf if={this.props.options.length > this.optionsToShow && this.state.showAll}>
+          <ShowIf if={this.props.options.length > this.optionsToShow}>
             <button onClick={this.showAll.bind(this)} className="btn btn-xs btn-default">
-              <i className="fa fa-caret-up"></i>
-              <span>Show less</span>
+              <i className={this.state.showAll ? 'fa fa-caret-up' : 'fa fa-caret-down'}></i>
+              <span>Show {this.state.showAll ? 'less' : this.props.options.length - this.optionsToShow +' more'}</span>
             </button>
           </ShowIf>
         </li>
@@ -138,7 +131,8 @@ MultiSelect.propTypes = {
   placeholder: PropTypes.string,
   optionsValue: PropTypes.string,
   optionsLabel: PropTypes.string,
-  prefix: PropTypes.string
+  prefix: PropTypes.string,
+  optionsToShow: PropTypes.number
 };
 
 export default MultiSelect;

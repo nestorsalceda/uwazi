@@ -10,6 +10,7 @@ import {shallow} from 'enzyme';
 import {MetadataProperty, dragSource, dropTarget} from 'app/Templates/components/MetadataProperty';
 import FormConfigInput from 'app/Templates/components/FormConfigInput';
 import FormConfigSelect from 'app/Templates/components/FormConfigSelect';
+import FormConfigNested from 'app/Templates/components/FormConfigNested';
 
 function wrapInTestContext(DecoratedComponent) {
   return DragDropContext(TestBackend)(
@@ -71,6 +72,7 @@ describe('MetadataProperty', () => {
         connectDropTarget: identity,
         inserting: true,
         label: 'test',
+        type: 'propertyType',
         index: 1,
         localID: 'id',
         formState: {fields: [], errors: {}},
@@ -89,6 +91,12 @@ describe('MetadataProperty', () => {
       });
     });
 
+    describe('FormConfigInput', () => {
+      it('should pass the type to the component', () => {
+        expect(component.find(FormConfigInput).first().props().type).toBe('propertyType');
+      });
+    });
+
     describe('when type is select or list', () => {
       it('should render FormConfigSelect', () => {
         expect(component.find(FormConfigInput).length).toBe(1);
@@ -101,6 +109,9 @@ describe('MetadataProperty', () => {
 
         component.setProps({type: 'multiselect'});
         expect(component.find(FormConfigSelect).length).toBe(1);
+
+        component.setProps({type: 'nested'});
+        expect(component.find(FormConfigNested).length).toBe(1);
       });
     });
 
@@ -201,6 +212,7 @@ describe('MetadataProperty', () => {
           delete monitor.getItem().index;
           backend.simulateHover([target.getHandlerId()]);
 
+          expect(monitor.getItem().index).toBe(0);
           expect(actions.addProperty).toHaveBeenCalledWith({label: 'source', type: 'type', inserting: true}, 0);
         });
       });

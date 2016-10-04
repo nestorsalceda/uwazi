@@ -68,7 +68,6 @@
   }
 
   .label {
-    float: left;
     margin-right: 15px;
     font-size: $f-size-sm;
     font-weight: normal;
@@ -81,8 +80,12 @@
   }
 }
 
+.item-icon {
+  margin: -3px 6px 0 0;
+}
+
 $item-width: auto;
-$item-padding: 10px;
+$item-padding: 15px;
 
 .item-info {
   width: $item-width;
@@ -151,7 +154,7 @@ $item-padding: 10px;
 .item-type-18 .item-type__name { background-color: $c-type-18; }
 
 .item-name {
-  display: block;
+  display: inline;
   font-family: $f-special;
   color: $c-black;
 }
@@ -173,8 +176,7 @@ $item-padding: 10px;
   }
   dt {
     min-width: 90px;
-    font-style: normal;
-    color: $c-grey;
+    font-style: italic;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -212,6 +214,7 @@ $item-padding: 10px;
   text-align: center;
   display: inline-block;
   box-shadow: $shadow;
+  background: $c-white;
 
   &:hover,
   &:focus,

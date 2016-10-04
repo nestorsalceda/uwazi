@@ -17,6 +17,7 @@ import {actions} from 'app/Metadata';
 import {deleteDocument} from 'app/Viewer/actions/documentActions';
 import {browserHistory} from 'react-router';
 import {TocForm, ShowToc} from 'app/Documents';
+import {MetadataFormButtons} from 'app/Metadata';
 
 export class ViewMetadataPanel extends Component {
   deleteDocument() {
@@ -48,12 +49,10 @@ export class ViewMetadataPanel extends Component {
   render() {
     const {doc, docBeingEdited} = this.props;
 
-    let disabled = false;
-
     return (
       <SidePanel open={this.props.open} className="metadata-sidepanel">
         <div className="sidepanel-header">
-          <i className="fa fa-close close-modal" onClick={this.close.bind(this)}/>&nbsp;
+          <i className="closeSidepanel fa fa-close close-modal" onClick={this.close.bind(this)}/>&nbsp;
           <Tabs selectedTab={this.props.tab || 'metadata'}
             handleSelect={(tab) => {
               this.props.showTab(tab);
@@ -73,41 +72,19 @@ export class ViewMetadataPanel extends Component {
               <li>
                 <TabLink to="connections">
                   <i className="fa fa-sitemap"></i>
-                  <span className="connectionsNumber">{this.props.numberOfReferences}</span>
+                  <span className="connectionsNumber">{this.props.references.size}</span>
                 </TabLink>
               </li>
             </ul>
           </Tabs>
         </div>
         <ShowIf if={this.props.tab === 'metadata' || !this.props.tab}>
-          <div className="sidepanel-footer">
-            <NeedAuthorization>
-              <ShowIf if={!docBeingEdited}>
-                <button
-                  onClick={() => this.props.loadInReduxForm('documentViewer.docForm', this.props.rawDoc.toJS(), this.props.templates.toJS())}
-                  className="edit-metadata btn btn-primary">
-                  <i className="fa fa-pencil"></i>
-                  <span className="btn-label">Edit</span>
-                </button>
-              </ShowIf>
-            </NeedAuthorization>
-            <ShowIf if={docBeingEdited}>
-              <button type="submit" form="metadataForm" disabled={disabled} className="edit-metadata btn btn-success">
-                <i className="fa fa-save"></i>
-                <span className="btn-label">Save</span>
-              </button>
-            </ShowIf>
-            <a className="edit-metadata btn btn-primary" href={'/api/documents/download?_id=' + this.props.rawDoc.toJS()._id} target="_blank">
-              <i className="fa fa-cloud-download"></i>
-              <span className="btn-label">Download</span>
-            </a>
-            <NeedAuthorization>
-              <button className="edit-metadata btn btn-danger" onClick={this.deleteDocument.bind(this)}>
-                <i className="fa fa-trash"></i>
-                <span className="btn-label">Delete</span>
-              </button>
-            </NeedAuthorization>
-          </div>
+          <MetadataFormButtons
+            delete={this.deleteDocument.bind(this)}
+            data={this.props.rawDoc}
+            formStatePath='documentViewer.docForm'
+            entityBeingEdited={docBeingEdited}
+          />
         </ShowIf>
         <NeedAuthorization>
             <ShowIf if={this.props.tab === 'toc' && this.props.tocBeingEdited}>
@@ -154,7 +131,7 @@ export class ViewMetadataPanel extends Component {
               })()}
             </TabContent>
             <TabContent for="connections">
-              <Connections />
+              <Connections references={this.props.references} />
             </TabContent>
           </Tabs>
         </div>
@@ -179,7 +156,7 @@ ViewMetadataPanel.propTypes = {
   deleteDocument: PropTypes.func,
   resetForm: PropTypes.func,
   loadInReduxForm: PropTypes.func,
-  numberOfReferences: PropTypes.number,
+  references: PropTypes.object,
   tocFormState: PropTypes.object,
   tocForm: PropTypes.array,
   saveToc: PropTypes.func,
@@ -194,12 +171,14 @@ ViewMetadataPanel.contextTypes = {
 
 const mapStateToProps = ({documentViewer}) => {
   let doc = formater.prepareMetadata(documentViewer.doc.toJS(), documentViewer.templates.toJS(), documentViewer.thesauris.toJS());
-  let numberOfReferences = documentViewer.references.size;
+  let references = documentViewer.references;
 
   if (documentViewer.targetDoc.get('_id')) {
     doc = formater.prepareMetadata(documentViewer.targetDoc.toJS(), documentViewer.templates.toJS(), documentViewer.thesauris.toJS());
-    numberOfReferences = documentViewer.targetDocReferences.size;
+    references = documentViewer.targetDocReferences;
   }
+
+  references = references.filterNot((ref) => !ref.get('inbound') && ref.get('sourceType') === 'metadata');
 
   return {
     open: documentViewer.uiState.get('panel') === 'viewMetadataPanel',
@@ -209,7 +188,7 @@ const mapStateToProps = ({documentViewer}) => {
     docBeingEdited: !!documentViewer.docForm._id,
     formState: documentViewer.docFormState,
     tab: documentViewer.uiState.get('tab'),
-    numberOfReferences,
+    references,
     tocForm: documentViewer.tocForm || [],
     tocBeingEdited: documentViewer.tocBeingEdited,
     tocFormState: documentViewer.tocFormState
