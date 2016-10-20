@@ -141,12 +141,11 @@ header {
   &:hover,
   &:active,
   &:focus {
+    background: transparent;
     @if $theme == light {
-      background: $c-white;
       border-color: $c-primary-dark;
     } @else {
       color: $c-white;
-      background: $c-primary-dark;
       border-color: $c-white;
     }
   }
