@@ -15,7 +15,7 @@ export class SiteName extends Component {
           ]}
         />
         <I18NLink to="/">
-          <img src="/public/logo-cejil-white.png" title="{this.props.siteName}" alt="{this.props.siteName}"/>
+          <img src="/public/logo-cejil-white.png" title={this.props.siteName} alt={this.props.siteName}/>
         </I18NLink>
       </div>
     );

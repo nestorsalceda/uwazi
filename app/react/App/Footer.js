@@ -10,7 +10,7 @@ class Footer extends Component {
           <ul className="footer-nav">
             
             <li className="footer-nav_item footer-collection_name">
-              <img src="/public/logo-cejil-gray.png" title="{this.props.siteName}" alt="{this.props.siteName}"/>
+              <img src="/public/logo-cejil-gray.png" title={this.props.siteName} alt={this.props.siteName}/>
             </li>
 
             <li className="footer-nav_separator">&nbsp;</li>
