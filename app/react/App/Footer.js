@@ -8,21 +8,21 @@ class Footer extends Component {
     return (
       <footer>
           <ul className="footer-nav">
-
-            <li className="footer-nav_item footer-powered">
-              <div className="footer-powered_tooltip">
-                <p>Uwazi is developed by HURIDOCS</p>
-                <p>in Kenya, Ecuador, Spain, Germany and USA.</p>
-              </div>
-              <p className="footer-powered_title">Powered by</p>
-              <a href="http://www.uwazidocs.org/" className="footer-powered_logo">Uwazi</a>
+            
+            <li className="footer-nav_item footer-collection_name">
+              <img src="/public/logo-cejil-gray.png" title="{this.props.siteName}" alt="{this.props.siteName}"/>
             </li>
 
             <li className="footer-nav_separator">&nbsp;</li>
 
-            <li className="footer-nav_item footer-collection_name">
-              <span>{this.props.siteName}</span>
-            </li>
+              <li className="footer-nav_item footer-powered">
+                <div className="footer-powered_tooltip">
+                  <p>Uwazi is developed by HURIDOCS</p>
+                  <p>in Kenya, Ecuador, Spain, Germany and USA.</p>
+                </div>
+                <p className="footer-powered_title">Powered by</p>
+                <a href="http://www.uwazidocs.org/" className="footer-powered_logo">Uwazi</a>
+              </li>
 
             <li className="footer-nav_separator">&nbsp;</li>
 

@@ -38,6 +38,10 @@ footer {
     @media(min-width: 1024px) {
       padding: 0 15px;
     }
+    
+    img {
+      height: 25px;
+    }
   }
 
   &_separator {
