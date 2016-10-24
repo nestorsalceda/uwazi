@@ -332,33 +332,13 @@ $item-padding: 15px;
     background-size: 40px 40px;
   }
 
-  // please delete item1, item2, item3... and let only the proper classes (like item-danger).
-  &.item3,
-  &.item5,
-  &.item6,
-  &.item7,
-  &.item10,
-  &.item11,
-  &.item12,
-  &.item-success {
-    border-bottom: 2px solid #8BC74C;
-  }
-  &.item2,
-  &.item9,
-  &.item-warning {
-    border-bottom: 2px solid orange;
-  }
-
-  &.item4,
-  &.item8,
-  &.item-danger {
-    border-bottom: 2px solid #ED353D;
-  }
-
-  &.item1,
   &.item-processing {
     border-bottom: 2px solid $c-white;
     cursor: default;
+    
+    .item-shortcut {
+      display: none;
+    }
   }
 }
 

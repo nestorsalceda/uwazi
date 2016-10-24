@@ -43,7 +43,7 @@ export class UploadEntity extends Component {
       <ItemFooter onClick={this.publish.bind(this)}>
         <ItemFooter.Label status="success">Ready to publish</ItemFooter.Label>
         <I18NLink to={`/entity/${entity.sharedId}`} className="item-shortcut" onClick={(e) => e.stopPropagation()}>
-          <i className="fa fa-file-o"></i><span>View</span><i className="fa fa-angle-right"></i>
+          <i className="fa fa-external-link"></i>
         </I18NLink>
       </ItemFooter>
     </RowList.Item>
