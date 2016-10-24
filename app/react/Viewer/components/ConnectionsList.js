@@ -113,7 +113,7 @@ export class ConnectionsList extends Component {
                   <div className="item-shortcut-group">
                     <ShowIf if={!this.props.targetDoc}>
                       <NeedAuthorization>
-                        <a className="item-shortcut" onClick={this.deleteReference.bind(this, reference)}>
+                        <a className="btn btn-default" onClick={this.deleteReference.bind(this, reference)}>
                           <i className="fa fa-trash"></i>
                         </a>
                       </NeedAuthorization>
@@ -122,7 +122,7 @@ export class ConnectionsList extends Component {
                     <ShowIf if={!this.props.targetDoc}>
                       <I18NLink to={`/${reference.connectedDocumentType}/${reference.connectedDocument}`}
                             onClick={e => e.stopPropagation()}
-                            className="item-shortcut">
+                            className="btn btn-default">
                         <span className="itemShortcut-arrow">
                           <i className="fa fa-external-link"></i>
                         </span>

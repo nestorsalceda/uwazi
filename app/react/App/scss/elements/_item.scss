@@ -209,13 +209,12 @@ $item-padding: 15px;
   border-bottom-right-radius: 4px;
 }
 
-.item-shortcut {
+.item-actions .btn {
   position: relative;
-  bottom: 5px;
-  margin: 0 -5px;
+  bottom: 3px;
+  right: -5px;
+  margin: 0 0 0 5px;
   padding: 0 5px;
-  color: $c-grey-dark;
-  border: 1px solid $c-grey-light;
   border-radius: 15px;
   min-width: 30px;
   height: 30px;
@@ -223,30 +222,11 @@ $item-padding: 15px;
   text-align: center;
   display: inline-block;
   box-shadow: $shadow;
-  background: $c-white;
 
   &:hover,
   &:focus,
   &:active {
     text-decoration: none;
-  }
-
-  .item.is-active & {
-    color: $c-primary;
-    border-color: $c-primary-light;
-  }
-
-  &:hover {
-    color: $c-white !important;
-    border-color: $c-primary !important;
-    background-color: $c-primary!important;
-  }
-}
-
-.item-shortcut-group {
-  margin: 0 -5px;
-  .item-shortcut {
-    margin: 0;
   }
 }
 
@@ -320,9 +300,12 @@ $item-padding: 15px;
     margin: 0;
     position: absolute;
     left: 0;
-    bottom: -2px;
+    bottom: 0;
     width: 100%;
-    height: 2px;
+    height: 4px;
+  }
+  .progress-bar {
+    background: $c-primary-light;
   }
   .progress-bar-striped, .progress-striped .progress-bar {
     background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.5) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.5) 50%,rgba(255,255,255,.5) 75%,transparent 75%,transparent);
@@ -333,12 +316,7 @@ $item-padding: 15px;
   }
 
   &.item-processing {
-    border-bottom: 2px solid $c-white;
     cursor: default;
-    
-    .item-shortcut {
-      display: none;
-    }
   }
 }
 

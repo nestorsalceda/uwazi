@@ -65,7 +65,7 @@ export class Doc extends Component {
         </div>
         <ItemFooter>
           <TemplateLabel template={template}/>
-          <I18NLink to={documentViewUrl} className="item-shortcut">
+          <I18NLink to={documentViewUrl} className="btn btn-default">
             <span className="itemShortcut-arrow">
               <i className="fa fa-external-link"></i>
             </span>

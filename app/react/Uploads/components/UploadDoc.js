@@ -81,19 +81,31 @@ export class UploadDoc extends Component {
         {(() => {
           if (itsUploading || itsProcessing) {
             return <ItemFooter.ProgressBar progress={progress} />;
+          } else {
+            return <div className="item-actions">
+              <span className="item-type item-type-0">
+                <i className="item-type__icon fa fa-file-text-o"></i>
+                <span className="item-type__name">Test Document</span>
+              </span>
+              <div className="item-shortcut-group">
+                <I18NLink to={`/document/${doc.sharedId}`} className="btn btn-default" onClick={(e) => e.stopPropagation()}>
+                  <span className="itemShortcut-arrow">
+                    <i className="fa fa-external-link"></i>
+                  </span>
+                </I18NLink>
+                <I18NLink to="#" className="btn btn-success">
+                  <i className="fa fa-check"></i>
+                </I18NLink>
+                <I18NLink to="#" className="btn btn-warning">
+                  <i className="fa fa-warning"></i>
+                </I18NLink>
+                <I18NLink to="#" className="btn btn-danger">
+                  <i className="fa fa-trash"></i>
+                </I18NLink>
+              </div>
+            </div>
           }
-          if (doc.processed) {
-            return <ItemFooter.Label status={status}>
-                    {message}
-                   </ItemFooter.Label>;
-          }
-          return <ItemFooter.Label status={status}>{message}</ItemFooter.Label>;
         })()}
-        <I18NLink to={`/document/${doc.sharedId}`} className="item-shortcut" onClick={(e) => e.stopPropagation()}>
-          <span className="itemShortcut-arrow">
-            <i className="fa fa-external-link"></i>
-          </span>
-        </I18NLink>
       </ItemFooter>
     </RowList.Item>
     );

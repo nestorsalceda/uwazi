@@ -41,10 +41,18 @@ export class UploadEntity extends Component {
         <ItemName>{entity.title}</ItemName>
       </div>
       <ItemFooter onClick={this.publish.bind(this)}>
-        <ItemFooter.Label status="success">Ready to publish</ItemFooter.Label>
-        <I18NLink to={`/entity/${entity.sharedId}`} className="item-shortcut" onClick={(e) => e.stopPropagation()}>
-          <i className="fa fa-external-link"></i>
-        </I18NLink>
+        <span className="item-type item-type-0">
+          <i className="item-type__icon fa fa-bank"></i>
+          <span className="item-type__name">Test Entity</span>
+        </span>
+        <div className="item-shortcut-group">
+          <I18NLink to={`/entity/${entity.sharedId}`} className="btn btn-default" onClick={(e) => e.stopPropagation()}>
+            <i className="fa fa-external-link"></i>
+          </I18NLink>
+          <I18NLink to="#" className="btn btn-success">
+            <i className="fa fa-check"></i>
+          </I18NLink>
+        </div>
       </ItemFooter>
     </RowList.Item>
     );

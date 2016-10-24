@@ -30,7 +30,6 @@ describe('UploadEntity', () => {
 
   it('should render success status by default', () => {
     expect(component.find(RowList.Item).props().status).toBe('success');
-    expect(component.find(ItemFooter.Label).props().status).toBe('success');
   });
 
   it('should not pass active prop if not metadataBeingEdited', () => {
